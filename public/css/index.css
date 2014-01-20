@@ -1,0 +1,111 @@
+html, body {
+    height: 100%;
+    width: 100%;
+}
+
+object {
+    height: 100%;
+    width: 100%;
+}
+
+#content {
+    margin-top:45px;
+}
+#group-name {
+    max-width: 150px;
+    margin-right: 20px;
+}
+.small-header {
+    font-size: 20px;
+    font-family: 'Cedarville Cursive', cursive;
+    background: #4D4D4D;
+    border-top-left-radius: 50px;
+    border-bottom-right-radius: 50px;
+    padding: 5px;
+}
+#group-path {
+    width: 300px;
+    margin-right: 20px;
+}
+#exit-setting {
+    color: white;
+}
+.breadcrumbs-name {
+    max-width: 300px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.user-list{
+    width:50% !important;
+}
+.explorer-item-icon {
+    width: 7% !important;
+}
+.explorer-item-name {
+    width: 63% !important;
+}
+.explorer-item-name p {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-top: 10px;
+}
+.explorer-item-ext {
+    width: 10% !important;
+}
+.explorer-item-size {
+    width: 20% !important;
+}
+.col-small {
+    max-width:50px;
+}
+#file-explorer-wrapper{
+    height: 100%;
+    width: 0px;
+    padding: 0px;
+    overflow:auto;
+}
+#file-explorer {
+    height:100%;
+    width: 100%;
+    background: #222;
+    padding: 5px;
+}
+.explorer-item {
+    text-align: left;
+
+    overflow: hidden;
+    color: white;
+    text-overflow: ellipsis;
+}
+.explorer-container {
+    height: 100%;
+}
+.explorer-item:hover {
+    background-color: #b11262;
+    border-radius: 10px;
+    text-decoration: none;
+}
+.explorer-item-hover {
+    background-color: #b11262;
+    border-radius: 10px;
+    text-decoration: none;
+}
+.explorer-text {
+    text-align: center;
+    color: white;
+    height: 30px;
+}
+::-webkit-scrollbar {
+    width: 12px;
+    color: white;
+}
+ 
+::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
+    border-radius: 10px;
+}
+ 
+::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5); 
+}

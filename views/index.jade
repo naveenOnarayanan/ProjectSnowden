@@ -1,0 +1,49 @@
+extends layout
+
+block content
+  #content.container
+    #navbar.navbar.navbar-inverse.navbar-fixed-top(role='navigation')
+      .navbar-header
+        button.navbar-toggle(type='button', data-toggle='collapse')
+        a.navbar-brand(href='/') <span class='small-header'>Project Snowden</span>
+      .collapse.navbar-collapse.navbar-responsive-collapse
+        ul.nav.navbar-nav.navbar-right
+          li
+            a#settings-btn Settings
+        ul.nav.navbar-nav.navbar-left
+          li
+            a File List
+    .page-header
+      h1 Users
+    .row.explorer-container
+      #available-files.col-lg-6.list-group
+      #file-explorer-wrapper.col-lg-6.jumbotron
+        .file-explorer-breadcrumbs
+          ol#address-bar.breadcrumb
+        #file-explorer
+
+    #settings.modal.fade(tabindex='-1', role='dialog', aria-labelledby='settingsLabel', aria-hidden='true')
+      .modal-dialog
+        .modal-content
+          .modal-header
+            button#exit-setting.close(type='button', data-dismiss='modal', aria-hidden='true') &times;
+            h2#settingsLabel.modal-title Settings
+          .modal-body
+            form(role="form")
+              h4(for="folders") Share Folders
+                .form-inline
+                  .form-group
+                    input#group-name.form-control(placeholder="Group Name")
+                  .form-group
+                    input#group-path.form-control(placeholder="Path")
+                  .form-group
+                    button.btn.btn-default(type="button") Add
+              .row
+                #folder-list-config.list-group
+                  a.list-group-item
+                    .row
+                      .col-lg-4
+                        h5 Name
+                      .col-lg-4
+                        h5 Path
+              hr
