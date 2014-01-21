@@ -26,9 +26,9 @@ exports.downloadFolder = function(req, res) {
     if (config.key == req.query.key) {
         var path = req.query.path;
         var filename = req.query.name;
-
-        res.setHeader('Content-disposition', 'attachment; filename=' + filename);
-        res.setHeader('Content-type', 'application/zip');
+        console.log(filename);
+        res.setHeader('Content-disposition', 'attachment; filename=' + filename + ".tar.gz");
+        res.setHeader('Content-type', 'application/x-tgz');
         res.setHeader('Content-Encoding', 'gzip');
 
         fstream.Reader({ 'path' : path, 'type' : 'Directory' })
