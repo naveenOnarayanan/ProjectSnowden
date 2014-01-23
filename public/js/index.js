@@ -51,6 +51,10 @@ $(function() {
     });
 });
 
+function escape(url) {
+	return url.replace(/\'/g, "&#39;");
+}
+
 function getDownloadableGroups(server, key) {
     var url = "http://";
     url += server
@@ -143,15 +147,17 @@ function registerExplorerItemClickEvent(server, key) {
 }
 
 function getFiles(server, key, dataPath, name) {
-    $.get("http://" + server + "/public/v1/uwp/files" + "?key=" + key + "&path=" + dataPath, function(values) {
+	var url = "http://" + server + "/public/v1/uwp/files" + "?key=" + key + "&path=" + dataPath;
+    $.get(url, function(values) {
     var folderString = "", fileString = "";
     $("#address-bar").append(
       "<li><a class='breadcrumbs' data-path='" + dataPath + "' data-name='" + name +"'><span class='breadcrumbs-name'>" + name + "</span></a></li>"
     );
     $.each(values.files, function(index, file) {
         if (file.type == "D") {
+			console.log(file.path);
             folderString +=
-                "<div class='row explorer-item explorer-folder' data-name='" + file.name + "' data-path='" + file.path + "' data-type='" + file.type + "'>"
+                "<div class='row explorer-item explorer-folder' data-name=\"" + file.name + "\" data-path=\"" + file.path + "\" data-type='" + file.type + "'>"
                     + "<div class='col-lg-3 explorer-item-icon'>"
                         + "<img src='images/folder.png' height='50px' width='50px'/>"
                     + "</div>"
@@ -171,11 +177,10 @@ function getFiles(server, key, dataPath, name) {
                 //     + file.name
                 // + "</div>";
         } else {
-            var fileIcon = ($.inArray(file.ext, ['avi', 'mp4', 'mkv', 'mp3', 'txt', 'jpg', 'gif', 'bmp', 'png']) == -1) ? 'file.png' : file.ext + '.png';
             fileString +=
-                "<div class='row explorer-item explorer-ffile' data-name='" + file.name + "' data-path='" + file.path + "' data-type='" + file.type + "'>"
+                "<div class='row explorer-item explorer-file' data-name=\"" + file.name + "\" data-path=\"" + file.path.replace(/\'/g, "&#39;") + "\" data-type='" + file.type + "'>"
                     + "<div class='col-lg-3 explorer-item-icon'>"
-                        + "<img src='images/" + fileIcon + "' height='60px' width='60px'/>"
+                        + "<img src='images/" + file.ext + ".png' onerror=\"this.src='images/file.png'\" height='60px' width='60px'/>"
                     + "</div>"
                     + "<div class='col-lg-3 explorer-item-name'>"
                         + "<p>" + file.name.replace("." + file.ext, "") + "</p>"
@@ -197,4 +202,8 @@ function getFiles(server, key, dataPath, name) {
     $("#file-explorer").html(folderString + fileString);
         registerExplorerItemClickEvent(server, key);
     });
+}
+
+function encodeHTML(s) {
+	return s.split('&').join('&amp;').split('<').join('&lt;').split('"').join('&quot;').split("'").join('&#39;');
 }
