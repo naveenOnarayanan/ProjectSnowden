@@ -1,0 +1,29 @@
+{
+  "folders": [
+    {
+      "path": "<Path with / instead of \  >", 
+      "name": "<Generic name>"
+    },
+    {
+      "path": "< Another path with / instead of \ >", 
+      "name": "<Generic name>"
+    },
+    {
+      "path": "< Another path with / instead of \ >", 
+      "name": "<Generic name>"
+    }
+  ], 
+  "users": [
+    {
+      "name": "<User's name>", 
+      "key": "<md5 hash key>", 
+      "server": "<server : port>"
+    }, 
+    {
+      "name": "<User 2 name>", 
+      "key": "<md5 hash key>", 
+      "server": "<server : port>"
+    }
+  ],
+  "key": "<md5 hash generated key for distribution>"
+}
