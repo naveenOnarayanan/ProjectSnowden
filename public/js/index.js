@@ -100,66 +100,75 @@ function registerExplorerItemClickEvent(server, key) {
 
     $.contextMenu({
         selector: '.explorer-item', 
-        callback: function(contextKey, options) {
-            var file_path = $(this).attr("data-path");
-            var file_name = $(this).attr("data-name");
-            var file_type = $(this).attr("data-type");
-            var file_ext = $(this).attr("data-ext");
+        build: function($trigger) {
+            var options = {
+                callback: function(contextKey, options) {
+                    var file_path = $(this).attr("data-path");
+                    var file_name = $(this).attr("data-name");
+                    var file_type = $(this).attr("data-type");
+                    var file_ext = $(this).attr("data-ext");
 
-            var url = "http://";
-            url += server;
+                    var url = "http://";
+                    url += server;
 
-            if (contextKey == "stream") {
-                url += "/public/v1/uwp/stream/";
-                url += "?key="
-;                url += key;
-                url += "&path=";
-                url += file_path;
-                url += "&name=";
-                url += file_name;
+                    if (contextKey == "stream") {
+                        url += "/public/v1/uwp/stream/";
+                        url += "?key="
+                        url += key;
+                        url += "&path=";
+                        url += file_path;
+                        url += "&name=";
+                        url += file_name;
 
-                if (file_ext == "mp3") {
-                    $("#modal-content").removeClass("modal-content");
-                    $("#modal-content").css("height", "");
-                    $("#modal-data").html(
-                        "<audio class='embedded-audio' controls autoplay name='media'>"
-                            + "<source src=\"" + url + "\" type='audio/mpeg'>"
-                        + "</audio>"
-                    );
-                    $("#videoLabel").text(file_name);
-                } else {
-                    $("#modal-content").addClass("modal-content");
-                    $("#modal-data").html(
-                        "<video class='embedded-video' controls autoplay name='media' width='640px' height='480px'>"
-                            + "<source src=\"" + url + "\" type='video/mp4'>"
-                        + "</video>"
-                    );
-                    $("#videoLabel").text(file_name);
+                        if (file_ext == "mp3") {
+                            $("#modal-content").removeClass("modal-content");
+                            $("#modal-content").css("height", "");
+                            $("#modal-data").html(
+                                "<audio class='embedded-audio' controls autoplay name='media'>"
+                                    + "<source src=\"" + url + "\" type='audio/mpeg'>"
+                                + "</audio>"
+                            );
+                            $("#videoLabel").text(file_name);
+                        } else {
+                            $("#modal-content").addClass("modal-content");
+                            $("#modal-data").html(
+                                "<video class='embedded-video' controls autoplay name='media' width='640px' height='480px'>"
+                                    + "<source src=\"" + url + "\" type='video/mp4'>"
+                                + "</video>"
+                            );
+                            $("#videoLabel").text(file_name);
+                        }
+
+                       
+                        $("#myModal").modal("show");
+                    }
+                    else if (contextKey == "download") {
+                        if (file_type == "D") {
+                            url += "/public/v1/uwp/download/folder/";
+                        } else {
+                            url += "/public/v1/uwp/download/"
+                        }
+
+                        url += "?key=";
+                        url += key;
+                        url += "&path=";
+                        url += file_path;
+                        url += "&name=";
+                        url += file_name;
+
+                        $.fileDownload(url);
+                    }
+                },
+                items: {
+                    "download": {name: "Download", icon: "edit"}
                 }
+            };
 
-               
-                $("#myModal").modal("show");
+            if($trigger.hasClass("explorer-file-streamable")) {
+                options.items.stream = {"name": "Stream", "icon": "edit"};
             }
-            else if (contextKey == "download") {
-                if (file_type == "D") {
-                    url += "/public/v1/uwp/download/folder/";
-                } else {
-                    url += "/public/v1/uwp/download/"
-                }
 
-                url += "?key=";
-                url += key;
-                url += "&path=";
-                url += file_path;
-                url += "&name=";
-                url += file_name;
-
-                $.fileDownload(url);
-            }
-        },
-        items: {
-            "download": {name: "Download", icon: "edit"},
-            "stream": {name: "Stream", icon: "edit"}
+            return options;
         }
     });
     
@@ -211,7 +220,7 @@ function getFiles(server, key, dataPath, name) {
                 + "</div>";
         } else {
             fileString +=
-                "<div class='row explorer-item explorer-file' data-ext=\"" + file.ext + "\" data-name=\"" + file.name + "\" data-path=\"" + file.path.replace(/\'/g, "&#39;") + "\" data-type='" + file.type + "'>"
+                "<div class='row explorer-item explorer-file " + (($.inArray(file.ext, ['mkv', 'mp4', 'mp3']) != -1) ? "explorer-file-streamable" : "") + "' data-ext=\"" + file.ext + "\" data-name=\"" + file.name + "\" data-path=\"" + file.path.replace(/\'/g, "&#39;") + "\" data-type='" + file.type + "'>"
                     + "<div class='col-lg-3 explorer-item-icon'>"
                         + "<img src='images/" + file.ext + ".png' onerror=\"this.src='images/file.png'\" height='60px' width='60px'/>"
                     + "</div>"

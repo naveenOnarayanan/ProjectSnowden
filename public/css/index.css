@@ -21,10 +21,13 @@ object {
 #modal-data {
     background: black;
     border: 1px solid #888;
-    border-radius: 50px;
+    border-radius: 2px;
+}
+.embedded-audio {
+    width: 100%;
 }
 .embedded-video {
-    border-radius: 50px;
+    border-radius: 2px;
 }
 .modal-content{
     width: 700px;
