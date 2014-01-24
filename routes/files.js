@@ -25,9 +25,11 @@ exports.files = function(req, res) {
 exports.stream = function(req, res) {
     if (config.key == req.query.key) {
         var path = req.query.path;
+        console.log("Path: " + path);
         var stat = fs.statSync(path);
         var total = stat.size;
         var mimeType = mime.lookup(path);
+
         if (req.headers.range) {
             var range = req.headers.range;
             var parts = range.replace(/bytes=/, "").split("-");

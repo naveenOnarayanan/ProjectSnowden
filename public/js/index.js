@@ -104,26 +104,40 @@ function registerExplorerItemClickEvent(server, key) {
             var file_path = $(this).attr("data-path");
             var file_name = $(this).attr("data-name");
             var file_type = $(this).attr("data-type");
+            var file_ext = $(this).attr("data-ext");
 
             var url = "http://";
             url += server;
 
             if (contextKey == "stream") {
                 url += "/public/v1/uwp/stream/";
-                url += "?key=";
-                url += key;
+                url += "?key="
+;                url += key;
                 url += "&path=";
                 url += file_path;
                 url += "&name=";
                 url += file_name;
 
-                $("#video-source").attr("src", url);
-                $("#modal-data").html(
-                    "<video controls autoplay name='media' width='640px' height='480px'>"
-                        + "<source src='" + url + "' type='video/mp4'>"
-                    + "</video>"
-                );
-                $("#videoLabel").text(file_name);
+                if (file_ext == "mp3") {
+                    $("#modal-content").removeClass("modal-content");
+                    $("#modal-content").css("height", "");
+                    $("#modal-data").html(
+                        "<audio class='embedded-audio' controls autoplay name='media'>"
+                            + "<source src=\"" + url + "\" type='audio/mpeg'>"
+                        + "</audio>"
+                    );
+                    $("#videoLabel").text(file_name);
+                } else {
+                    $("#modal-content").addClass("modal-content");
+                    $("#modal-data").html(
+                        "<video class='embedded-video' controls autoplay name='media' width='640px' height='480px'>"
+                            + "<source src=\"" + url + "\" type='video/mp4'>"
+                        + "</video>"
+                    );
+                    $("#videoLabel").text(file_name);
+                }
+
+               
                 $("#myModal").modal("show");
             }
             else if (contextKey == "download") {
@@ -195,14 +209,9 @@ function getFiles(server, key, dataPath, name) {
                         + "<p>" + file.size + "</p>"
                     + "</div>"
                 + "</div>";
-                // "<div class='explorer-item explorer-folder' data-name='" + file.name + "' data-path='" + file.path + "'>"
-                //     + "<img src='images/folder.png' height='100px' width='100px'/>"
-                //     + "<br/>"
-                //     + file.name
-                // + "</div>";
         } else {
             fileString +=
-                "<div class='row explorer-item explorer-file' data-name=\"" + file.name + "\" data-path=\"" + file.path.replace(/\'/g, "&#39;") + "\" data-type='" + file.type + "'>"
+                "<div class='row explorer-item explorer-file' data-ext=\"" + file.ext + "\" data-name=\"" + file.name + "\" data-path=\"" + file.path.replace(/\'/g, "&#39;") + "\" data-type='" + file.type + "'>"
                     + "<div class='col-lg-3 explorer-item-icon'>"
                         + "<img src='images/" + file.ext + ".png' onerror=\"this.src='images/file.png'\" height='60px' width='60px'/>"
                     + "</div>"
