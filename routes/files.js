@@ -22,6 +22,42 @@ exports.files = function(req, res) {
     }
 }
 
+exports.stream = function(req, res) {
+    if (config.key == req.query.key) {
+        var path = req.query.path;
+        var stat = fs.statSync(path);
+        var total = stat.size;
+        var mimeType = mime.lookup(path);
+        if (req.headers.range) {
+            var range = req.headers.range;
+            var parts = range.replace(/bytes=/, "").split("-");
+            console.log(parts);
+            var partialstart = parts[0];
+            console.log(partialstart);
+            var partialend = parts[1];
+            console.log(partialend);
+
+            var start = parseInt(partialstart, 10);
+            var end = partialend ? parseInt(partialend, 10) : total-1;
+            var chunksize = (end-start)+1;
+            console.log('RANGE: ' + start + ' - ' + end + ' = ' + chunksize);
+         
+            var file = fs.createReadStream(path, {start: start, end: end});
+            console.log(mimeType);
+            res.writeHead(206, { 'Content-Range': 'bytes ' + start + '-' + end + '/' + total, 'Accept-Ranges': 'bytes', 'Content-Length': chunksize, 'Content-Type': mimeType });
+            file.pipe(res);
+        } else {
+            res.setHeader("Content-Length", total);
+            res.setHeader("Content-Type", mimeType);
+            fs.createReadStream(path).pipe(res);
+        }
+    }
+
+
+
+    
+}
+
 exports.downloadFolder = function(req, res) {
     if (config.key == req.query.key) {
         var path = req.query.path;

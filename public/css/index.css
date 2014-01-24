@@ -15,6 +15,21 @@ object {
     max-width: 150px;
     margin-right: 20px;
 }
+#modal-content {
+    background: transparent;
+}
+#modal-data {
+    background: black;
+    border: 1px solid #888;
+    border-radius: 50px;
+}
+.modal-content{
+    width: 700px;
+    height: 500px;
+}
+#myModal {
+    padding: 0px;
+}
 .small-header {
     font-size: 20px;
     font-family: 'Cedarville Cursive', cursive;

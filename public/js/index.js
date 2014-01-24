@@ -21,6 +21,10 @@ $(function() {
         });
     });
 
+    $('#myModal').on('hidden.bs.modal', function () {
+        $("#modal-data").empty();
+    });
+
 
     $.get("/public/v1/uwp/userlist", function(values) {
         $.each(values.userlist, function(index, value) {
@@ -101,27 +105,47 @@ function registerExplorerItemClickEvent(server, key) {
             var file_name = $(this).attr("data-name");
             var file_type = $(this).attr("data-type");
 
-
             var url = "http://";
             url += server;
 
-            if (file_type == "D") {
-                url += "/public/v1/uwp/download/folder/";
-            } else {
-                url += "/public/v1/uwp/download/"
+            if (contextKey == "stream") {
+                url += "/public/v1/uwp/stream/";
+                url += "?key=";
+                url += key;
+                url += "&path=";
+                url += file_path;
+                url += "&name=";
+                url += file_name;
+
+                $("#video-source").attr("src", url);
+                $("#modal-data").html(
+                    "<video controls autoplay name='media' width='640px' height='480px'>"
+                        + "<source src='" + url + "' type='video/mp4'>"
+                    + "</video>"
+                );
+                $("#videoLabel").text(file_name);
+                $("#myModal").modal("show");
             }
+            else if (contextKey == "download") {
+                if (file_type == "D") {
+                    url += "/public/v1/uwp/download/folder/";
+                } else {
+                    url += "/public/v1/uwp/download/"
+                }
 
-            url += "?key=";
-            url += key;
-            url += "&path=";
-            url += file_path;
-            url += "&name=";
-            url += file_name;
+                url += "?key=";
+                url += key;
+                url += "&path=";
+                url += file_path;
+                url += "&name=";
+                url += file_name;
 
-            $.fileDownload(url);
+                $.fileDownload(url);
+            }
         },
         items: {
-            "download": {name: "Download", icon: "edit"}
+            "download": {name: "Download", icon: "edit"},
+            "stream": {name: "Stream", icon: "edit"}
         }
     });
     

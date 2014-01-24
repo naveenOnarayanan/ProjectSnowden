@@ -38,6 +38,7 @@ app.get('/public/v1/uwp/userlist', user.list)
 
 app.get('/public/v1/uwp/filelist', files.fileList);
 app.get('/public/v1/uwp/files', files.files);
+app.get('/public/v1/uwp/stream', files.stream);
 app.get('/public/v1/uwp/download/', files.download);
 app.get('/public/v1/uwp/download/folder', files.downloadFolder);
 
