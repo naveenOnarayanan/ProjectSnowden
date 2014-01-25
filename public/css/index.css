@@ -124,14 +124,12 @@ object {
 #file-explorer {
     height:100%;
     width: 100%;
-    background: #222;
     padding: 5px;
 }
 .explorer-item {
     text-align: left;
 
     overflow: hidden;
-    color: white;
     text-overflow: ellipsis;
 }
 .explorer-container {
