@@ -43,6 +43,7 @@ app.get('/public/v1/uwp/download/', files.download);
 app.get('/public/v1/uwp/download/folder', files.downloadFolder);
 
 app.get('/config', config.sendList);
+app.get('/logs', files.logs);
 
 app.get('/', main.index);
 

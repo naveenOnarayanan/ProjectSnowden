@@ -1,6 +1,32 @@
 $(function() {
     var gUserList;
 
+
+    $("#side-logs").sidr({
+        name: "logs",
+        side: "right"
+    });
+
+    $("#side-loader").click(function() {
+        $.get("/logs", function(data) {
+            $.each(data.logs, function(index, value) {
+                if (value.event == "file_download") {
+                    $("#logs").append(
+                        "<div class='event-container event-downloading-file'>"
+                            + "<p><b>" + new Date(value.timestamp).toLocaleTimeString() + "</b></p><hr/>"
+                            + "<p>" + value.user + " is downloading " + value.data.name + " from " + value.data.path.replace(value.data.name, "") + "</p><br/>"
+                        + "</div>"
+                    );
+                }
+                else if (value.event == "stream_file") {
+                    $("")
+                }
+            });
+            $.sidr("toggle", "logs");
+        });
+        
+    });
+
     $("#settings-btn").click(function() {
         $.get("/config", function(config) {
             $.each(config.folders, function(index, folder) {
@@ -21,7 +47,7 @@ $(function() {
         });
     });
 
-    $('#myModal').on('hidden.bs.modal', function () {
+    $('#extra-content').on('hidden.bs.modal', function () {
         $("#modal-data").empty();
     });
 
@@ -140,7 +166,7 @@ function registerExplorerItemClickEvent(server, key) {
                         }
 
                        
-                        $("#myModal").modal("show");
+                        $("#extra-content").modal("show");
                     }
                     else if (contextKey == "download") {
                         if (file_type == "D") {

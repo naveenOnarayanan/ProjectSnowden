@@ -5,6 +5,15 @@ var fstream = require('fstream');
 var tar = require('tar');
 var zlib = require('zlib');
 
+
+var logs = [];
+
+exports.logs = function(req, res) {
+    res.send({
+        "logs": logs
+    });
+};
+
 exports.fileList = function(req, res) {
     if (req.query.key == config.key) {
         res.send({
@@ -25,27 +34,23 @@ exports.files = function(req, res) {
 exports.stream = function(req, res) {
     if (config.key == req.query.key) {
         var path = req.query.path;
-        console.log("Path: " + path);
         var stat = fs.statSync(path);
         var total = stat.size;
         var mimeType = mime.lookup(path);
 
+        addLog("stream_file", { "name": req.query.name, "path": path, "size": total }, req.ip, new Date().getTime());
+
         if (req.headers.range) {
             var range = req.headers.range;
             var parts = range.replace(/bytes=/, "").split("-");
-            console.log(parts);
             var partialstart = parts[0];
-            console.log(partialstart);
             var partialend = parts[1];
-            console.log(partialend);
 
             var start = parseInt(partialstart, 10);
             var end = partialend ? parseInt(partialend, 10) : total-1;
             var chunksize = (end-start)+1;
-            console.log('RANGE: ' + start + ' - ' + end + ' = ' + chunksize);
          
             var file = fs.createReadStream(path, {start: start, end: end});
-            console.log(mimeType);
             res.writeHead(206, { 'Content-Range': 'bytes ' + start + '-' + end + '/' + total, 'Accept-Ranges': 'bytes', 'Content-Length': chunksize, 'Content-Type': mimeType });
             file.pipe(res);
         } else {
@@ -54,10 +59,6 @@ exports.stream = function(req, res) {
             fs.createReadStream(path).pipe(res);
         }
     }
-
-
-
-    
 }
 
 exports.downloadFolder = function(req, res) {
@@ -68,6 +69,8 @@ exports.downloadFolder = function(req, res) {
         res.setHeader('Content-disposition', 'attachment; filename=' + filename + ".tar.gz");
         res.setHeader('Content-type', 'application/x-tgz');
         res.setHeader('Content-Encoding', 'gzip');
+
+        addLog("folder_download", { "name": req.query.name, "path": path}, req.ip, new Date().getTime());
 
         fstream.Reader({ 'path' : path, 'type' : 'Directory' })
             .pipe(tar.Pack())/* Convert the directory to a .tar file */
@@ -86,6 +89,8 @@ exports.download = function(req, res) {
         res.setHeader('Content-disposition', 'attachment; filename=' + req.query.name);
         res.setHeader('Content-type', mimeType);
         res.setHeader('Content-Length', stat.size);
+
+        addLog("file_download", { "name": req.query.name, "path": path, "size": stat.size }, req.ip, new Date().getTime());
 
         var stream = fs.createReadStream(path, { bufferSize: 64 * 1024 });
         stream.pipe(res);
@@ -139,3 +144,20 @@ function getFiles(folder) {
 
     return folders.concat(files);
 }
+
+function addLog(event, data, requestIP, time) {
+    var user = "Unknown";
+    config.users.forEach(function(item) {
+        if (item.server.indexOf(requestIP) != -1) {
+            user = item.name;
+        }
+    });
+
+    logs.push({
+        "event": event,
+        "data": data,
+        "user": user,
+        "server": requestIP,
+        "timestamp": time
+    });
+};
