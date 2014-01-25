@@ -7,47 +7,17 @@ $(function() {
         side: "right"
     });
 
+    startWatchingLogs();
+
     $("#side-loader").click(function() {
-        window.setInterval(function() {
-            $("#logs").empty();
-            $.get("/logs", function(data) {
-                $.each(data.logs, function(index, value) {
-                    console.log(JSON.stringify(value));
-                    if (value.event == "file_download") {
-                        $("#logs").prepend(
-                            "<div class='event-container event-download-file'>"
-                                + "<p><b>" + new Date(value.timestamp).toLocaleTimeString() + "</b></p><hr/>"
-                                + "<p>" + value.user + " is downloading " + value.data.name + " from " + value.data.path.replace(value.data.name, "") + "</p><br/>"
-                            + "</div>"
-                        );
-                    } else if (value.event == "file_download_complete") {
-                        $("#logs").prepend(
-                            "<div class='event-container event-download-file-complete'>"
-                                + "<p><b>" + new Date(value.timestamp).toLocaleTimeString() + "</b></p><hr/>"
-                                + "<p>" + value.user + " completed downloading " + value.data.name + " from " + value.data.path.replace(value.data.name, "") + "</p><br/>"
-                            + "</div>"
-                        );
-                    } else if (value.event == "stream_file") {
-                        $("#logs").prepend(
-                            "<div class='event-container event-stream-file'>"
-                                + "<p><b>" + new Date(value.timestamp).toLocaleTimeString() + "</b></p><hr/>"
-                                + "<p>" + value.user + " is streaming " + value.data.name + " from " + value.data.path.replace(value.data.name, "") + "</p><br/>"
-                            + "</div>"
-                        )
-                    } else if (value.event == "stream_file_complete") {
-                        $("#logs").prepend(
-                            "<div class='event-container event-stream-file-complete'>"
-                                + "<p><b>" + new Date(value.timestamp).toLocaleTimeString() + "</b></p><hr/>"
-                                + "<p>" + value.user + " is done streaming " + value.data.name + " from " + value.data.path.replace(value.data.name, "") + "</p><br/>"
-                            + "</div>"
-                        )
-                    }
-                    logBuffer.push(JSON.stringify(value));
-                });
-                
-            });
-        }, 10000);
-        $.sidr("toggle", "logs");
+        $("#side-loader").css("right", "0px");
+
+        $.sidr("toggle", "logs", function() {
+            if ($("#logs").css("display") == "none") {
+                $("#side-loader").animate({right: "0"}, 100);
+            }
+        });
+        $("#side-loader").css("right", $("#logs").width());
         $("#logs").scrollTop();
     });
 
@@ -330,4 +300,50 @@ function getFiles(server, key, dataPath, name) {
 
 function encodeHTML(s) {
 	return s.split('&').join('&amp;').split('<').join('&lt;').split('"').join('&quot;').split("'").join('&#39;');
+}
+
+function updateLogs() {
+    $("#logs").empty();
+    $.get("/logs", function(data) {
+        $.each(data.logs, function(index, value) {
+            console.log(JSON.stringify(value));
+            if (value.event == "file_download") {
+                $("#logs").prepend(
+                    "<div class='event-container event-download-file'>"
+                        + "<p><b>" + new Date(value.timestamp).toLocaleTimeString() + "</b></p><hr/>"
+                        + "<p>" + value.user + " is downloading " + value.data.name + " from " + value.data.path.replace(value.data.name, "") + "</p><br/>"
+                    + "</div>"
+                );
+            } else if (value.event == "file_download_complete") {
+                $("#logs").prepend(
+                    "<div class='event-container event-download-file-complete'>"
+                        + "<p><b>" + new Date(value.timestamp).toLocaleTimeString() + "</b></p><hr/>"
+                        + "<p>" + value.user + " completed downloading " + value.data.name + " from " + value.data.path.replace(value.data.name, "") + "</p><br/>"
+                    + "</div>"
+                );
+            } else if (value.event == "stream_file") {
+                $("#logs").prepend(
+                    "<div class='event-container event-stream-file'>"
+                        + "<p><b>" + new Date(value.timestamp).toLocaleTimeString() + "</b></p><hr/>"
+                        + "<p>" + value.user + " is streaming " + value.data.name + " from " + value.data.path.replace(value.data.name, "") + "</p><br/>"
+                    + "</div>"
+                )
+            } else if (value.event == "stream_file_complete") {
+                $("#logs").prepend(
+                    "<div class='event-container event-stream-file-complete'>"
+                        + "<p><b>" + new Date(value.timestamp).toLocaleTimeString() + "</b></p><hr/>"
+                        + "<p>" + value.user + " is done streaming " + value.data.name + " from " + value.data.path.replace(value.data.name, "") + "</p><br/>"
+                    + "</div>"
+                )
+            }
+        });
+        
+    });
+}
+
+function startWatchingLogs() {
+    updateLogs();
+    window.setInterval(function() {
+        updateLogs();
+    }, 60000);
 }

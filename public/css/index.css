@@ -15,8 +15,20 @@ object {
     max-width: 150px;
     margin-right: 20px;
 }
+#group-path {
+    width: 300px;
+    margin-right: 20px;
+}
+#user-name {
+    max-width: 150px;
+    margin-right: 20px;
+}
+#user-server {
+    width: 300px;
+    margin-right: 20px;
+}
 #side-loader {
-    position: absolute;
+    position: fixed;
     font-family: 'Offside', cursive;
     top: 15%;
     right: 0px;
@@ -48,9 +60,6 @@ object {
     width: 700px;
     height: 500px;
 }
-#myModal {
-    padding: 0px;
-}
 .small-header {
     font-size: 20px;
     font-family: 'Cedarville Cursive', cursive;
@@ -58,10 +67,6 @@ object {
     border-top-left-radius: 50px;
     border-bottom-right-radius: 50px;
     padding: 5px;
-}
-#group-path {
-    width: 300px;
-    margin-right: 20px;
 }
 #exit-setting {
     color: white;
