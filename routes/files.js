@@ -95,15 +95,15 @@ exports.downloadFolder = function(req, res) {
         res.setHeader('Set-Cookie', 'fileDownload=true; path=/');
         res.setHeader('Cache-Control', 'max-age=60, must-revalidate');
 
-        addLog("folder_download", { "name": req.query.name, "path": path}, req.ip, new Date().getTime());
+        addLog("file_download", { "name": req.query.name + ".tar.gz", "path": path}, req.ip, new Date().getTime());
 
-        fstream.Reader({ 'path' : path, 'type' : 'Directory' })
-            .pipe(tar.Pack())/* Convert the directory to a .tar file */
+        var reader = fstream.Reader({ 'path' : path, 'type' : 'Directory' })
+        reader.pipe(tar.Pack())/* Convert the directory to a .tar file */
             .pipe(zlib.Gzip())/* Compress the .tar file */
             .pipe(res); // Write back to the response, or wherever else...
 
-        fstream.on('end', function() {
-            addLog("folder_download_complete", { "name": req.query.name, "path": path}, req.ip, new Date().getTime());
+        reader.on('end', function() {
+            addLog("file_download_complete", { "name": req.query.name + ".tar.gz", "path": path}, req.ip, new Date().getTime());
         });
     }
 }
