@@ -191,24 +191,7 @@ function registerExplorerItemClickEvent(server, key) {
                         url += "&name=";
                         url += file_name;
 
-                        $.fileDownload(url, {
-                            successCallback: function(url) {
-                                alert("complete");
-                                // var url = "http://";
-                                // url += server;
-                                // url += "/public/v1/uwp/download/complete";
-                                // url += "?key=";
-                                // url += key;
-                                // url += "&path=";
-                                // url += file_path;
-                                // url += "&name=";
-                                // url += file_name;
-                                // $.post(url);
-                            },
-                            failCallback: function(res, url) {
-                                alert("failed");
-                            }
-                        });
+                        $.fileDownload(url);
                     }
                 },
                 items: {
