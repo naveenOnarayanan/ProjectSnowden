@@ -42,6 +42,8 @@ app.get('/public/v1/uwp/stream', files.stream);
 app.get('/public/v1/uwp/download/', files.download);
 app.get('/public/v1/uwp/download/folder', files.downloadFolder);
 
+app.post('/public/v1/uwp/stream/complete', files.streamComplete)
+
 app.get('/config', config.sendList);
 app.get('/logs', files.logs);
 

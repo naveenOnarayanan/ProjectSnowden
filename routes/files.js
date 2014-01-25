@@ -14,6 +14,14 @@ exports.logs = function(req, res) {
     });
 };
 
+exports.streamComplete = function(req, res) {
+    var path = req.query.path;
+    var stat = fs.statSync(path);
+    var total = stat.size;
+    addLog("stream_file_complete", { "name": req.query.name, "path": path, "size": total }, req.ip, new Date().getTime());
+    res.send(200);
+}
+
 exports.fileList = function(req, res) {
     if (req.query.key == config.key) {
         res.send({
@@ -37,8 +45,22 @@ exports.stream = function(req, res) {
         var stat = fs.statSync(path);
         var total = stat.size;
         var mimeType = mime.lookup(path);
+        var file;
 
-        addLog("stream_file", { "name": req.query.name, "path": path, "size": total }, req.ip, new Date().getTime());
+        var addToLogs = true;
+
+        for (var i = 0; i < logs.length; i++ ) {
+            var time = new Date(logs[i].timestamp);
+            var hours = time.getHours();
+            var minutes = time.getMinutes();
+            if (logs[i].event == "stream_file" && logs[i].data.name == req.query.name && logs[i].data.path == path && logs[i].server == req.ip && hours == new Date().getHours() && minutes == new Date().getMinutes()) {
+                addToLogs = false;
+            }
+        }
+
+        if (addToLogs) {
+            addLog("stream_file", { "name": req.query.name, "path": path, "size": total }, req.ip, new Date().getTime());
+        }
 
         if (req.headers.range) {
             var range = req.headers.range;
@@ -50,13 +72,14 @@ exports.stream = function(req, res) {
             var end = partialend ? parseInt(partialend, 10) : total-1;
             var chunksize = (end-start)+1;
          
-            var file = fs.createReadStream(path, {start: start, end: end});
+            file = fs.createReadStream(path, {start: start, end: end});
             res.writeHead(206, { 'Content-Range': 'bytes ' + start + '-' + end + '/' + total, 'Accept-Ranges': 'bytes', 'Content-Length': chunksize, 'Content-Type': mimeType });
             file.pipe(res);
         } else {
             res.setHeader("Content-Length", total);
             res.setHeader("Content-Type", mimeType);
-            fs.createReadStream(path).pipe(res);
+            file = fs.createReadStream(path);
+            file.pipe(res);
         }
     }
 }
@@ -69,6 +92,8 @@ exports.downloadFolder = function(req, res) {
         res.setHeader('Content-disposition', 'attachment; filename=' + filename + ".tar.gz");
         res.setHeader('Content-type', 'application/x-tgz');
         res.setHeader('Content-Encoding', 'gzip');
+        res.setHeader('Set-Cookie', 'fileDownload=true; path=/');
+        res.setHeader('Cache-Control', 'max-age=60, must-revalidate');
 
         addLog("folder_download", { "name": req.query.name, "path": path}, req.ip, new Date().getTime());
 
@@ -76,6 +101,10 @@ exports.downloadFolder = function(req, res) {
             .pipe(tar.Pack())/* Convert the directory to a .tar file */
             .pipe(zlib.Gzip())/* Compress the .tar file */
             .pipe(res); // Write back to the response, or wherever else...
+
+        fstream.on('end', function() {
+            addLog("folder_download_complete", { "name": req.query.name, "path": path}, req.ip, new Date().getTime());
+        });
     }
 }
 
@@ -89,11 +118,16 @@ exports.download = function(req, res) {
         res.setHeader('Content-disposition', 'attachment; filename=' + req.query.name);
         res.setHeader('Content-type', mimeType);
         res.setHeader('Content-Length', stat.size);
+        res.setHeader('Set-Cookie', 'fileDownload=true; path=/');
+        res.setHeader('Cache-Control', 'max-age=60, must-revalidate');
 
         addLog("file_download", { "name": req.query.name, "path": path, "size": stat.size }, req.ip, new Date().getTime());
 
         var stream = fs.createReadStream(path, { bufferSize: 64 * 1024 });
         stream.pipe(res);
+        stream.on('end', function() {
+            addLog("file_download_complete", { "name": req.query.name, "path": path, "size": stat.size}, req.ip, new Date().getTime());
+        });
     }
 };
 

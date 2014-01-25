@@ -1,6 +1,6 @@
 $(function() {
     var gUserList;
-
+    var logBuffer = [];
 
     $("#side-logs").sidr({
         name: "logs",
@@ -8,23 +8,47 @@ $(function() {
     });
 
     $("#side-loader").click(function() {
-        $.get("/logs", function(data) {
-            $.each(data.logs, function(index, value) {
-                if (value.event == "file_download") {
-                    $("#logs").append(
-                        "<div class='event-container event-downloading-file'>"
-                            + "<p><b>" + new Date(value.timestamp).toLocaleTimeString() + "</b></p><hr/>"
-                            + "<p>" + value.user + " is downloading " + value.data.name + " from " + value.data.path.replace(value.data.name, "") + "</p><br/>"
-                        + "</div>"
-                    );
-                }
-                else if (value.event == "stream_file") {
-                    $("")
-                }
+        window.setInterval(function() {
+            $("#logs").empty();
+            $.get("/logs", function(data) {
+                $.each(data.logs, function(index, value) {
+                    console.log(JSON.stringify(value));
+                    if (value.event == "file_download") {
+                        $("#logs").prepend(
+                            "<div class='event-container event-download-file'>"
+                                + "<p><b>" + new Date(value.timestamp).toLocaleTimeString() + "</b></p><hr/>"
+                                + "<p>" + value.user + " is downloading " + value.data.name + " from " + value.data.path.replace(value.data.name, "") + "</p><br/>"
+                            + "</div>"
+                        );
+                    } else if (value.event == "file_download_complete") {
+                        $("#logs").prepend(
+                            "<div class='event-container event-download-file-complete'>"
+                                + "<p><b>" + new Date(value.timestamp).toLocaleTimeString() + "</b></p><hr/>"
+                                + "<p>" + value.user + " completed downloading " + value.data.name + " from " + value.data.path.replace(value.data.name, "") + "</p><br/>"
+                            + "</div>"
+                        );
+                    } else if (value.event == "stream_file") {
+                        $("#logs").prepend(
+                            "<div class='event-container event-stream-file'>"
+                                + "<p><b>" + new Date(value.timestamp).toLocaleTimeString() + "</b></p><hr/>"
+                                + "<p>" + value.user + " is streaming " + value.data.name + " from " + value.data.path.replace(value.data.name, "") + "</p><br/>"
+                            + "</div>"
+                        )
+                    } else if (value.event == "stream_file_complete") {
+                        $("#logs").prepend(
+                            "<div class='event-container event-stream-file-complete'>"
+                                + "<p><b>" + new Date(value.timestamp).toLocaleTimeString() + "</b></p><hr/>"
+                                + "<p>" + value.user + " is done streaming " + value.data.name + " from " + value.data.path.replace(value.data.name, "") + "</p><br/>"
+                            + "</div>"
+                        )
+                    }
+                    logBuffer.push(JSON.stringify(value));
+                });
+                
             });
-            $.sidr("toggle", "logs");
-        });
-        
+        }, 10000);
+        $.sidr("toggle", "logs");
+        $("#logs").scrollTop();
     });
 
     $("#settings-btn").click(function() {
@@ -48,7 +72,20 @@ $(function() {
     });
 
     $('#extra-content').on('hidden.bs.modal', function () {
+        var server = $("#modal-content").attr("data-server");
+        var file_path = $("#modal-content").attr("data-path");
+        var file_name = $("#modal-content").attr("data-name");
         $("#modal-data").empty();
+
+        var url = "http://";
+        url += server;
+        url += "/public/v1/uwp/stream/complete";
+        url += "?path=" + file_path;
+        url += "&name=" + file_name;
+
+        $.post(url);
+
+        $("#modal-content").attr("data-server", "").attr("data-path", "").attr("data-name", "");;
     });
 
 
@@ -146,6 +183,8 @@ function registerExplorerItemClickEvent(server, key) {
                         url += "&name=";
                         url += file_name;
 
+                        $("#modal-content").attr("data-server", server).attr("data-path", file_path).attr("data-name", file_name);
+
                         if (file_ext == "mp3") {
                             $("#modal-content").removeClass("modal-content");
                             $("#modal-content").css("height", "");
@@ -182,7 +221,24 @@ function registerExplorerItemClickEvent(server, key) {
                         url += "&name=";
                         url += file_name;
 
-                        $.fileDownload(url);
+                        $.fileDownload(url, {
+                            successCallback: function(url) {
+                                alert("complete");
+                                // var url = "http://";
+                                // url += server;
+                                // url += "/public/v1/uwp/download/complete";
+                                // url += "?key=";
+                                // url += key;
+                                // url += "&path=";
+                                // url += file_path;
+                                // url += "&name=";
+                                // url += file_name;
+                                // $.post(url);
+                            },
+                            failCallback: function(res, url) {
+                                alert("failed");
+                            }
+                        });
                     }
                 },
                 items: {

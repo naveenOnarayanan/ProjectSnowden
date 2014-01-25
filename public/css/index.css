@@ -17,14 +17,15 @@ object {
 }
 #side-loader {
     position: absolute;
+    font-family: 'Offside', cursive;
     top: 15%;
     right: 0px;
     color: white;
     white-space:pre;
     background: #333333;
     padding: 10px;
-    border-radius: 10px;
-   text-decoration: none;
+    text-decoration: none;
+    text-align: center;
  }
 #side-loader:hover {
     background: #444;
@@ -96,6 +97,18 @@ object {
 .event-container{
     padding: 20px;
     border: 1px solid #000;
+}
+.event-download-file {
+    background: #610B21;
+}
+.event-download-file-complete {
+    background: #0B6138;
+}
+.event-stream-file {
+    background: #B43104;
+}
+.event-stream-file-complete {
+    background: #084B8A;
 }
 #file-explorer-wrapper{
     height: 100%;
