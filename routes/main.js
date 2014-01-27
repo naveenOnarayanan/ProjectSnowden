@@ -1,4 +1,5 @@
 var os = require('os')
+var config = require('./config.js').list();
 /*
  * GET home page.
  */
@@ -7,7 +8,7 @@ exports.index = function(req, res){
     var incomingIp = req.ip;
 
     var interfaces = os.networkInterfaces();
-    var addresses = [];
+    var addresses = config.whitelist;
     for (k in interfaces) {
         for (k2 in interfaces[k]) {
             var address = interfaces[k][k2];
@@ -16,6 +17,8 @@ exports.index = function(req, res){
             }
         }
     }
+
+    console.log(addresses);
 
     if (addresses.indexOf(incomingIp) == -1) {
         res.send("Access Denied");

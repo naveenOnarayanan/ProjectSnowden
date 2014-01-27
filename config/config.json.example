@@ -1,29 +1,32 @@
 {
   "folders": [
     {
-      "path": "<Path with / instead of \  >", 
-      "name": "<Generic name>"
+      "path": "Path to folder 1", 
+      "name": "Folder 1 name"
     },
     {
-      "path": "< Another path with / instead of \ >", 
-      "name": "<Generic name>"
+      "path": "Path to folder 2", 
+      "name": "Folder 2 name"
     },
     {
-      "path": "< Another path with / instead of \ >", 
-      "name": "<Generic name>"
-    }
-  ], 
-  "users": [
-    {
-      "name": "<User's name>", 
-      "key": "<md5 hash key>", 
-      "server": "<server : port>"
-    }, 
-    {
-      "name": "<User 2 name>", 
-      "key": "<md5 hash key>", 
-      "server": "<server : port>"
+      "path": "Path to folder 3", 
+      "name": "Folder 3 name"
     }
   ],
-  "key": "<md5 hash generated key for distribution>"
+  "users": [
+    {
+      "name": "User 1 name", 
+      "key": "User 1 md5 hash key", 
+      "server": "User 1 server:port"
+    },
+    {
+      "name": "User 2 name", 
+      "key": "User 2 md5 hash key", 
+      "server": "User 2 server:port"
+    }
+  ],
+  "whitelist": [
+    "e.g. whitelist"
+  ],
+  "key": "md5 hash generated key for distribution"
 }
