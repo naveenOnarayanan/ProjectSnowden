@@ -89,7 +89,7 @@ $(function() {
 });
 
 function escape(url) {
-	return url.replace(/\'/g, "&#39;");
+	return url.replace(/\+/g, "%2B");
 }
 
 function getDownloadableGroups(server, key) {
@@ -230,7 +230,7 @@ function registerExplorerItemClickEvent(server, key) {
 
 function getFiles(server, key, dataPath, name) {
 	var url = "http://" + server + "/public/v1/uwp/files" + "?key=" + key + "&path=" + dataPath;
-    $.get(url, function(values) {
+    $.get(escape(url), function(values) {
     var folderString = "", fileString = "";
     $("#address-bar").append(
       "<li><a class='breadcrumbs' data-path='" + dataPath + "' data-name='" + name +"'><span class='breadcrumbs-name'>" + name + "</span></a></li>"
