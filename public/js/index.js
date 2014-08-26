@@ -1,4 +1,6 @@
+var secret = '';
 $(function() {
+    secret = $("#secret").attr("data-secret");
     var gUserList;
     var logBuffer = [];
 
@@ -58,7 +60,7 @@ $(function() {
         $("#modal-content").attr("data-server", "").attr("data-path", "").attr("data-name", "");;
     });
 
-
+    // Local thus sent through loopback aand not prone to packet sniffing
     $.get("/public/v1/uwp/userlist", function(values) {
         $.each(values.userlist, function(index, value) {
             $("#available-files").append(
@@ -100,7 +102,7 @@ function getDownloadableGroups(server, port, key) {
     url += port;
     url += "/public/v1/uwp/filelist";
     url += "?";
-    url += "key=" + key;
+    url += "key=" + encodeURI(CryptoJS.AES.encrypt(key, secret).toString().replace(/=/g, '|').replace(/\+/g, '~'));
 
     $.get(url, function(values) {
         $.each(values.filelist, function(index, file) {
@@ -152,7 +154,7 @@ function registerExplorerItemClickEvent(server, port, key) {
                     if (contextKey == "stream") {
                         url += "/public/v1/uwp/stream/";
                         url += "?key=";
-                        url += key;
+                        url += encodeURI(CryptoJS.AES.encrypt(key, secret).toString().replace(/=/g, '|').replace(/\+/g, '~'));
                         url += "&path=";
                         url += file_path;
                         url += "&name=";
@@ -190,7 +192,7 @@ function registerExplorerItemClickEvent(server, port, key) {
                         }
 
                         url += "?key=";
-                        url += key;
+                        url += encodeURI(CryptoJS.AES.encrypt(key, secret).toString().replace(/=/g, '|').replace(/\+/g, '~'));
                         url += "&path=";
                         url += file_path;
                         url += "&name=";
@@ -234,7 +236,7 @@ function registerExplorerItemClickEvent(server, port, key) {
 }
 
 function getFiles(server, port, key, dataPath, name) {
-	var url = "http://" + server + ":" + port + "/public/v1/uwp/files" + "?key=" + key + "&path=" + dataPath;
+	var url = "http://" + server + ":" + port + "/public/v1/uwp/files" + "?key=" + encodeURI(CryptoJS.AES.encrypt(key, secret).toString().replace(/=/g, '|').replace(/\+/g, '~')) + "&path=" + dataPath;
     $.get(escape(url), function(values) {
     var folderString = "", fileString = "";
     $("#address-bar").append(
@@ -242,7 +244,6 @@ function getFiles(server, port, key, dataPath, name) {
     );
     $.each(values.files, function(index, file) {
         if (file.type == "D") {
-			console.log(file.path);
             folderString +=
                 "<div class='row explorer-item explorer-folder' data-name=\"" + file.name + "\" data-path=\"" + file.path + "\" data-type='" + file.type + "'>"
                     + "<div class='col-lg-3 explorer-item-icon'>"

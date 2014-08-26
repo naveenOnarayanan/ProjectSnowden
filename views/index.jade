@@ -1,6 +1,8 @@
 extends layout
 
+
 block content
+  #secret(data-secret='#{secret}')
   #content.container
     #navbar.navbar.navbar-inverse.navbar-fixed-top(role='navigation')
       .navbar-header
@@ -49,14 +51,7 @@ block content
               hr
 
     #side-loader
-      | A
-      | C
-      | T
-      | I
-      | V
-      | I
-      | T
-      | Y
+      i.fa.fa-bookmark
 
     #extra-content.modal.fade(tabindex='-1', role='dialog', aria-labelledby='videoLabel', aria-hidden='true')
       .modal-dialog
@@ -64,6 +59,3 @@ block content
           .modal-body#modal-data
 
     #side-logs
-
-
-

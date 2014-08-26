@@ -2,7 +2,8 @@ var config = {
     folders: [],
     users: [],
     whitelist: [],
-    key: ""
+    key: "",
+    secret: ""
 };
 
 function resetActive(event, percent, step) {
@@ -58,6 +59,8 @@ function removeWhitelist(id) {
 }
 
 $(function() {
+    config.secret = hex_md5("ProjectSnowdenIsTheBest");
+
     $("#generated-md5").hide();
     $("#final-confirmation").hide();
     $("#add-folder").click(function() {

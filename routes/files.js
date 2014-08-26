@@ -4,7 +4,7 @@ var mime = require('mime');
 var fstream = require('fstream');
 var tar = require('tar');
 var zlib = require('zlib');
-
+var crypto = require("crypto-js");
 
 var logs = [];
 
@@ -23,7 +23,9 @@ exports.streamComplete = function(req, res) {
 }
 
 exports.fileList = function(req, res) {
-    if (req.query.key == config.key) {
+    var decryptedKey = crypto.AES.decrypt(decodeURI(req.query.key).replace(/\|/g, '=').replace(/~/g, '\+'), config.secret);
+    console.log("Decrypted: " + decryptedKey.toString(crypto.enc.Utf8));
+    if (decryptedKey.toString(crypto.enc.Utf8) == config.key) {
         res.send({
             filelist: config.folders
         });
@@ -31,7 +33,8 @@ exports.fileList = function(req, res) {
 };
 
 exports.files = function(req, res) {
-    if (config.key == req.query.key) {
+    var decryptedKey = crypto.AES.decrypt(decodeURI(req.query.key).replace(/\|/g, '=').replace(/~/g, '\+'), config.secret);
+    if (config.key == decryptedKey.toString(crypto.enc.Utf8)) {
         var path = req.query.path;
         res.send({
             files: getFiles(path)
@@ -40,7 +43,8 @@ exports.files = function(req, res) {
 }
 
 exports.stream = function(req, res) {
-    if (config.key == req.query.key) {
+    var decryptedKey = crypto.AES.decrypt(decodeURI(req.query.key).replace(/\|/g, '=').replace(/~/g, '\+'), config.secret);
+    if (config.key == decryptedKey.toString(crypto.enc.Utf8)) {
         var path = req.query.path;
         var stat = fs.statSync(path);
         var total = stat.size;
@@ -85,7 +89,8 @@ exports.stream = function(req, res) {
 }
 
 exports.downloadFolder = function(req, res) {
-    if (config.key == req.query.key) {
+    var decryptedKey = crypto.AES.decrypt(decodeURI(req.query.key).replace(/\|/g, '=').replace(/~/g, '\+'), config.secret);
+    if (config.key == decryptedKey.toString(crypto.enc.Utf8)) {
         var path = req.query.path;
         var filename = req.query.name;
         console.log(filename);
@@ -109,7 +114,8 @@ exports.downloadFolder = function(req, res) {
 }
 
 exports.download = function(req, res) {
-    if (config.key == req.query.key) {
+    var decryptedKey = crypto.AES.decrypt(decodeURI(req.query.key).replace(/\|/g, '=').replace(/~/g, '\+'), config.secret);
+    if (config.key == decryptedKey.toString(crypto.enc.Utf8)) {
         var path = req.query.path;
         var mimeType = mime.lookup(path);
 

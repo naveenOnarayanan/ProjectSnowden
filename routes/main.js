@@ -23,6 +23,6 @@ exports.index = function(req, res){
     if (addresses.indexOf(incomingIp) == -1) {
         res.send("Access Denied");
     } else {
-        res.render('index', { title: 'Express' });
+        res.render('index', { secret:  config.secret});
     }
 };
