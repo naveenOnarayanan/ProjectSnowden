@@ -1,3 +1,3 @@
 @echo off
-nodejs\win\npm.cmd install -l
+nodejs\bin\npm.cmd install -l
 exit /b
