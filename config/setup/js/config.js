@@ -64,7 +64,7 @@ $(function() {
         var row_id = config.folders.length;
         config.folders.push({
             name: $("#folder-name").val(),
-            path: $("#folder-path").val()
+            path: $("#folder-path").val().replace(/\\/g, "/")
         });
         $("#folders-body").append(
             "<tr data-id='" + row_id + "' id='folder-" + row_id + "'>" +
@@ -133,8 +133,18 @@ $(function() {
             success: function(data) {
                 console.log("done");
                 $("#final-confirmation").show();
-                window.setTimeout(function() {
-                    window.location.href = "http://localhost:3000";
+                window.setInterval(function() {
+                    $.ajax(
+                    {
+                        type: "GET",
+                        async: false,
+                        url: "http://localhost:3000/",
+                        success: function(data) {
+                            console.log("here");
+                            console.log(data);
+                            window.location.href = "http://localhost:3000";
+                        }
+                    });
                 }, 2000);
             },
             error: function(err) {
