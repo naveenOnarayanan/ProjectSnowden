@@ -64,6 +64,9 @@ $(function() {
     $("#generated-md5").hide();
     $("#final-confirmation").hide();
     $("#add-folder").click(function() {
+        if (!$("#folder-form").parsley().validate()) {
+            return;
+        }
         var row_id = config.folders.length;
         config.folders.push({
             name: $("#folder-name").val(),
@@ -78,9 +81,13 @@ $(function() {
         );
         $("#folder-name").val("");
         $("#folder-path").val("");
+        $("#folder-form").parsley().reset();
     });
 
     $("#add-user").click(function() {
+        if (!$("#user-form").parsley().validate()) {
+            return;
+        }
         var row_id = config.users.length;
         config.users.push({
             name: $("#user-name").val(),
@@ -99,12 +106,16 @@ $(function() {
         );
 
         $("#user-name").val("");
-        $("#user-server").val(""),
-        $("#user-port").val(""),
-        $("#user-key").val("")
+        $("#user-server").val("");
+        $("#user-port").val("");
+        $("#user-key").val("");
+        $("#user-form").parsley().reset();
     });
 
     $("#add-whitelist").click(function() {
+        if (!$("#whitelist-form").parsley().validate()) {
+            return;
+        }
         var row_id = config.whitelist.length;
         config.whitelist.push($("#whitelist-ip").val());
         $("#whitelist-body").append(
@@ -114,20 +125,25 @@ $(function() {
             "</tr>"
         );
         $("#whitelist-ip").val("");
+        $("#whitelist-form").parsley().reset();
     });
 
     $("#add-key").click(function() {
+        if (!$("#key-form").parsley().validate()) {
+            return;
+        }
+        event.preventDefault();
+        event.stopPropagation();
         var user_str = $("#key").val();
         var generated_md5 = hex_md5(user_str);
         $("#generated-md5").text(generated_md5);
         config.key = generated_md5;
         $("#generated-md5").show();
+        $("#key-form").parsley().reset();
         $("#key").val("");
     });
 
     $("#save-config").click(function() {
-        console.log(JSON.stringify(config));
-
         $.ajax({
             type: "POST",
             contentType: "application/json",
