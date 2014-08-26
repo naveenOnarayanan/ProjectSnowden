@@ -1,0 +1,3 @@
+[submodule "node_modules/nodemon"]
+	path = node_modules/nodemon
+	url = git@github.com:naveenOnarayanan/nodemon.git
