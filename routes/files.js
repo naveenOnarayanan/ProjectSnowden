@@ -131,6 +131,10 @@ exports.download = function(req, res) {
     }
 };
 
+exports.initConfig = function(res, req) {
+    res.send(config);
+}
+
 function getFiles(folder) {
     var folders = [];
     var files = [];
@@ -195,3 +199,4 @@ function addLog(event, data, requestIP, time) {
         "timestamp": time
     });
 };
+

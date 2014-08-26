@@ -65,6 +65,7 @@ $(function() {
                 "<a class='list-group-item user-list-item' data-index='" + index + "'>"
                     + "<h4 class='list-group-item-heading'> " + value.name + "</h4>"
                     + "<p class='list-group-item-text'> Server: " + value.server + "</p>"
+                    + "<p class='list-group-item-text'> Port: " + value.port + "</p>"
                 + "</a>"
             );
         });
@@ -83,7 +84,7 @@ $(function() {
             );
 
             var index = parseInt($(this).attr("data-index"));
-            getDownloadableGroups(values.userlist[index].server, values.userlist[index].key);
+            getDownloadableGroups(values.userlist[index].server, values.userlist[index].port, values.userlist[index].key);
         });
     });
 });
@@ -92,12 +93,14 @@ function escape(url) {
 	return url.replace(/\+/g, "%2B");
 }
 
-function getDownloadableGroups(server, key) {
+function getDownloadableGroups(server, port, key) {
     var url = "http://";
-    url += server
-    url += "/public/v1/uwp/filelist"
+    url += server;
+    url += ":";
+    url += port;
+    url += "/public/v1/uwp/filelist";
     url += "?";
-    url += "key=" + key
+    url += "key=" + key;
 
     $.get(url, function(values) {
         $.each(values.filelist, function(index, file) {
@@ -122,13 +125,13 @@ function getDownloadableGroups(server, key) {
                 // + "</div>"
             );
         });
-        registerExplorerItemClickEvent(server, key);
+        registerExplorerItemClickEvent(server, port, key);
     });
 }
 
-function registerExplorerItemClickEvent(server, key) {
+function registerExplorerItemClickEvent(server, port, key) {
     $(".explorer-item.explorer-folder").click(function(){
-        getFiles(server, key, $(this).attr("data-path"), $(this).attr("data-name"));
+        getFiles(server, port, key, $(this).attr("data-path"), $(this).attr("data-name"));
     });
 
     $.contextMenu({
@@ -143,17 +146,19 @@ function registerExplorerItemClickEvent(server, key) {
 
                     var url = "http://";
                     url += server;
+                    url += ":";
+                    url += port;
 
                     if (contextKey == "stream") {
                         url += "/public/v1/uwp/stream/";
-                        url += "?key="
+                        url += "?key=";
                         url += key;
                         url += "&path=";
                         url += file_path;
                         url += "&name=";
                         url += file_name;
 
-                        $("#modal-content").attr("data-server", server).attr("data-path", file_path).attr("data-name", file_name);
+                        $("#modal-content").attr("data-server", server).attr("data-port", port).attr("data-path", file_path).attr("data-name", file_name);
 
                         if (file_ext == "mp3") {
                             $("#modal-content").removeClass("modal-content");
@@ -218,18 +223,18 @@ function registerExplorerItemClickEvent(server, key) {
         var index = $(this).parent().index();
 
         $(this).parent().parent().children().slice(index).detach();
-        getFiles(server, key, $(this).attr("data-path"), $(this).attr("data-name"));
+        getFiles(server, port, key, $(this).attr("data-path"), $(this).attr("data-name"));
     });
     $(".breadcrumbs-groups").off().on('click', function() {
         var index = $(this).parent().index();
         $("#file-explorer").empty();
         $(this).parent().parent().children().slice(index + 1).detach();
-        getDownloadableGroups(server, key);
+        getDownloadableGroups(server, port, key);
     })
 }
 
-function getFiles(server, key, dataPath, name) {
-	var url = "http://" + server + "/public/v1/uwp/files" + "?key=" + key + "&path=" + dataPath;
+function getFiles(server, port, key, dataPath, name) {
+	var url = "http://" + server + ":" + port + "/public/v1/uwp/files" + "?key=" + key + "&path=" + dataPath;
     $.get(escape(url), function(values) {
     var folderString = "", fileString = "";
     $("#address-bar").append(
@@ -277,7 +282,7 @@ function getFiles(server, key, dataPath, name) {
         }
     });
     $("#file-explorer").html(folderString + fileString);
-        registerExplorerItemClickEvent(server, key);
+        registerExplorerItemClickEvent(server, port, key);
     });
 }
 

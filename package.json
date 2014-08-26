@@ -10,6 +10,8 @@
     "jade": "*",
     "mime": "*",
     "fstream": "*",
-    "tar": "*"
+    "tar": "*",
+    "open": "*",
+    "nodemon": "*"
   }
 }
