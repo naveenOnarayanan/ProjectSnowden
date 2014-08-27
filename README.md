@@ -6,7 +6,19 @@ UWP RezNet File Sharing
 Instructions
 --------------
 
-1. Clone or fork project
-2. git submodule init
-3. git submodule update
-4. run.bat (windows) 
+1. Clone the project and all its submodules
+
+    git clone --recursive https://github.com/naveenOnarayanan/ProjectSnowden.git
+
+2. Depending on the OS run specific scripts
+
+    WINDOWS
+    run-windows.bat
+
+    OSX
+    bash run-mac.sh
+
+    LINUX
+    bash run-linux.sh
+
+
