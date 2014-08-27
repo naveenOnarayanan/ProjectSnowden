@@ -1,5 +1,5 @@
 #! /bin/bash
-path=$(pwd)
+
 echo "Checking if permission to access nodejs is given"
 
 perm=$(stat -c %a nodejs)
