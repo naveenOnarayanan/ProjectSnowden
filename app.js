@@ -54,7 +54,7 @@ if (fs.existsSync(config_path)) {
 
     app.post('/public/v1/uwp/stream/complete', files.streamComplete);
 } else {
-    open('./config/setup/config.html');
+    open(__dirname + '/config/setup/config.html');
     app.post('/config/setup', function(req, res) {
         if (req.body) {
             res.send(200);
