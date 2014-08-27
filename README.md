@@ -12,13 +12,13 @@ Instructions
 
 2. Depending on the OS run specific scripts
 
-    WINDOWS
-    run-windows.bat
+    * WINDOWS
+    -- run-windows.bat
 
-    OSX
-    bash run-mac.sh
+    * OSX
+    -- bash run-mac.sh
 
-    LINUX
-    bash run-linux.sh
+    * LINUX
+    -- bash run-linux.sh
 
 
