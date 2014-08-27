@@ -2,10 +2,10 @@
 path=$(pwd)
 echo "Checking if permission to access nodejs is given"
 
-perm=$(stat -c nodejs "$f")
+perm=$(stat -c %a nodejs)
 
 if [ "$perm" = "777" ]; then
-    echo "$f permissions are 777"
+    echo "Permissions are already set for nodejs"
 else
     echo "Need to chmod nodejs directory to update dependencies"
     sudo chmod -R 777 nodejs
