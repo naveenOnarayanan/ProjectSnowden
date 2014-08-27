@@ -32,15 +32,15 @@ if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
 
-var config_path = './config/config.json';
+var config_path = __dirname + '/config/config.json';
 var config = null;
 
 if (fs.existsSync(config_path)) {
     // Local routing files
-    var user = require('./routes/user');
-    var main = require('./routes/main');
-    var files = require('./routes/files');
-    var config = require('./routes/config');
+    var user = require(__dirname + '/routes/user');
+    var main = require(__dirname + '/routes/main');
+    var files = require(__dirname + '/routes/files');
+    var config = require(__dirname + '/routes/config');
 
     app.get('/public/v1/uwp/userlist', user.list);
     app.get('/public/v1/uwp/filelist', files.fileList);

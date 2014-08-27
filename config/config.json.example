@@ -28,5 +28,6 @@
   "whitelist": [
     "e.g. whitelist"
   ],
-  "key": "md5 hash generated key for distribution"
+  "key": "md5 hash generated key for distribution",
+  "secret": "for encryption"
 }

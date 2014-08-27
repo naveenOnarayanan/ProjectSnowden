@@ -1,4 +1,4 @@
-var config = require('../config/config.json'); 
+var config = require(__dirname + '/../config/config.json'); 
 
 exports.list = function() {
   return config;

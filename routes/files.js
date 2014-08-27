@@ -1,4 +1,4 @@
-var config = require('./config.js').list();
+var config = require(__dirname + '/config.js').list();
 var fs = require('fs');
 var mime = require('mime');
 var fstream = require('fstream');
