@@ -16,4 +16,4 @@ ${path}/../nodejs/bin/node/mac/node ${path}/../nodejs/bin/node_modules/npm/bin/n
 ${path}/../nodejs/bin/node/mac/node ${path}/../nodejs/bin/node_modules/npm/bin/npm-cli.js install -l ${path}/../node_modules/nodemon/
 
 echo "Starting app"
-${path}/../nodejs/bin/node/mac/node ${path}/../node_modules/nodemon/bin/nodemon.js -e json -w ${path}/../config
+${path}/../nodejs/bin/node/mac/node ${path}/../node_modules/nodemon/bin/nodemon.js -e json -w ${path}/../config ${path}/../app.js
