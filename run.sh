@@ -1,10 +1,14 @@
 #! /bin/bash
 
 echo "Checking if permission to access nodejs is given"
-perms==$(stat nodejs | sed -n '/^Access: (/{s/Access: (\([0-9]\+\).*$/\1/;p}')
-if [[ $perms =~ 755 ]]; then
+
+perm=$(stat -c nodejs "$f")
+
+if [ "$perm" = "777" ]; then
+    echo "$f permissions are 777"
+else
     echo "Need to chmod nodejs directory to update dependencies"
-    sudo chmod -R 755 nodejs
+    sudo chmod -R 777 nodejs
 fi
 
 echo "Running setup"
