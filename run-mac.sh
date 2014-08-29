@@ -2,7 +2,7 @@
 
 echo "Checking if permission to access nodejs is given"
 
-perm=$(stat -c %a nodejs)
+perm=$(stat -f '%OLp' nodejs)
 
 if [ "$perm" = "777" ]; then
     echo "Permissions are already set for nodejs"
