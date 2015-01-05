@@ -128,7 +128,7 @@ $(function() {
         $("#whitelist-form").parsley().reset();
     });
 
-    $("#add-key").click(function() {
+    $("#add-key").click(function(event) {
         if (!$("#key-form").parsley().validate()) {
             return;
         }
