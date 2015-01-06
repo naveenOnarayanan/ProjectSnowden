@@ -161,7 +161,9 @@ $(function() {
                         success: function(data) {
                             console.log("here");
                             console.log(data);
-                            window.location.href = "http://localhost:3000";
+                            window.setInterval(function() {
+                                window.location.href = "http://localhost:3000";
+                            }, 5000);
                         }
                     });
                 }, 2000);

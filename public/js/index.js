@@ -96,38 +96,44 @@ function escape(url) {
 }
 
 function getDownloadableGroups(server, port, key) {
-    var url = "http://";
-    url += server;
-    url += ":";
-    url += port;
-    url += "/public/v1/uwp/filelist";
-    url += "?";
-    url += "key=" + encodeURI(CryptoJS.AES.encrypt(key, secret).toString().replace(/=/g, '|').replace(/\+/g, '~'));
+    $.get("http://desolate-depths-5086.herokuapp.com/v1/getUserIp", {user: key, ip: server}, function(data) {
+        if (data.ip != null) {
+            server = data.ip;
+        }
+        console.log(server);
+        var url = "http://";
+        url += server;
+        url += ":";
+        url += port;
+        url += "/public/v1/uwp/filelist";
+        url += "?";
+        url += "key=" + encodeURI(CryptoJS.AES.encrypt(key, secret).toString().replace(/=/g, '|').replace(/\+/g, '~'));
 
-    $.get(url, function(values) {
-        $.each(values.filelist, function(index, file) {
-            $("#file-explorer").append(
-                "<div class='row explorer-item explorer-folder' data-name='" + file.name + "' data-path='" + file.path + "'>"
-                    + "<div class='col-lg-3 explorer-item-icon'>"
-                        + "<img src='images/folder.png' height='50px' width='50px'/>"
+        $.get(url, function(values) {
+            $.each(values.filelist, function(index, file) {
+                $("#file-explorer").append(
+                    "<div class='row explorer-item explorer-folder' data-name='" + file.name + "' data-path='" + file.path + "'>"
+                        + "<div class='col-lg-3 explorer-item-icon'>"
+                            + "<img src='images/folder.png' height='50px' width='50px'/>"
+                        + "</div>"
+                        + "<div class='col-lg-3 explorer-item-name'>"
+                            + "<p>" + file.name + "</p>"
+                        + "</div>"
+                        + "<div class='col-lg-3 explorer-item-ext'>"
+                            + "<p></p>"
+                        + "</div>"
+                        + "<div class='col-lg-3 explorer-item-size'>"
+                            + "<p></p>"
+                        + "</div>"
                     + "</div>"
-                    + "<div class='col-lg-3 explorer-item-name'>"
-                        + "<p>" + file.name + "</p>"
-                    + "</div>"
-                    + "<div class='col-lg-3 explorer-item-ext'>"
-                        + "<p></p>"
-                    + "</div>"
-                    + "<div class='col-lg-3 explorer-item-size'>"
-                        + "<p></p>"
-                    + "</div>"
-                + "</div>"
-                // "<div class='explorer-item explorer-folder' data-name='" + value.name + "' data-path='" + value.path + "'>"
-                //     + "<img src='images/group.png' height='100px' width='100px'/>"
-                //     + "<p class='explorer-text'>" + value.name + "</p>"
-                // + "</div>"
-            );
+                    // "<div class='explorer-item explorer-folder' data-name='" + value.name + "' data-path='" + value.path + "'>"
+                    //     + "<img src='images/group.png' height='100px' width='100px'/>"
+                    //     + "<p class='explorer-text'>" + value.name + "</p>"
+                    // + "</div>"
+                );
+            });
+            registerExplorerItemClickEvent(server, port, key);
         });
-        registerExplorerItemClickEvent(server, port, key);
     });
 }
 

@@ -5,10 +5,11 @@
 var express = require('express');
 var fs = require('fs');
 var http = require('http');
+http.post = require('http-post');
 var path = require('path');
 var open = require('open');
+var os = require('os');
 var app = express();
-
 
 // all environments
 app.set('port', process.env.PORT || 3000);
@@ -57,14 +58,37 @@ if (fs.existsSync(config_path)) {
     open(__dirname + '/config/setup/config.html');
     app.post('/config/setup', function(req, res) {
         if (req.body) {
-            res.send(200);
-            console.log('sent response');
-            fs.writeFileSync(config_path, JSON.stringify(req.body, null, 4));
-        }
+            console.log("KEY: " + req.body.key);
+            // Get local IP
+            var interfaces = os.networkInterfaces();
+            var localIp = null;
+            for (k in interfaces) {
+                for (k2 in interfaces[k]) {
+                    var address = interfaces[k][k2];
+                    if (address.family == "IPv4" && !address.internal) {
+                        localIp = address.address;
+                        break;
+                    }
+                }
+            }
 
+            console.log("POSTING right now with IP: " + localIp);
+
+            // http://desolate-depths-5086.herokuapp.com
+            http.post('http://desolate-depths-5086.herokuapp.com/v1/register', {'user': req.body.key, 'ip': localIp}, function(response) {
+                console.log(response);
+                if (response.statusCode == 200) {
+                    res.send(200); 
+                    console.log('sent response');
+                    fs.writeFileSync(config_path, JSON.stringify(req.body, null, 4));
+                }
+            });
+        }
     });
 }
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
 });
+
+
