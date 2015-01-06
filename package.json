@@ -12,6 +12,7 @@
     "fstream": "*",
     "tar": "*",
     "open": "*",
-    "crypto-js": "*"
+    "crypto-js": "*",
+    "http-post": "*"
   }
 }

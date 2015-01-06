@@ -54,24 +54,22 @@ if (fs.existsSync(config_path)) {
     app.get('/', main.index);
 
     app.post('/public/v1/uwp/stream/complete', files.streamComplete);
+
+    // Verify IP with server on app load
+    fs.readFile(config_path, 'utf8', function(err, data) {
+        if (err) throw err;
+        configData = JSON.parse(data);
+        http.post('http://desolate-depths-5086.herokuapp.com/v1/register', {'user': configData.key, 'ip': getLocalIp()}, function(response) {
+            console.log ("IP Updated");
+        });
+    });
 } else {
     open(__dirname + '/config/setup/config.html');
     app.post('/config/setup', function(req, res) {
         if (req.body) {
             console.log("KEY: " + req.body.key);
             // Get local IP
-            var interfaces = os.networkInterfaces();
-            var localIp = null;
-            for (k in interfaces) {
-                for (k2 in interfaces[k]) {
-                    var address = interfaces[k][k2];
-                    if (address.family == "IPv4" && !address.internal) {
-                        localIp = address.address;
-                        break;
-                    }
-                }
-            }
-
+            var localIp = getLocalIp();
             console.log("POSTING right now with IP: " + localIp);
 
             // http://desolate-depths-5086.herokuapp.com
@@ -87,8 +85,25 @@ if (fs.existsSync(config_path)) {
     });
 }
 
+
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
 });
 
+
+function getLocalIp() {
+    var interfaces = os.networkInterfaces();
+    var localIp = null;
+    for (k in interfaces) {
+        for (k2 in interfaces[k]) {
+            var address = interfaces[k][k2];
+            if (address.family == "IPv4" && !address.internal) {
+                localIp = address.address;
+                break;
+            }
+        }
+    }
+
+    return localIp;
+}
 
